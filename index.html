@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>2D Coin Game</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.min.js"></script>
+  <style>
+    body { margin: 0; padding: 0; overflow: hidden; }
+    button { font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<script>
+let player;
+let rectangle1, rectangle2;
+let obs1, obs2;
+let coin;
+
+let bg;
+let coinImage;
+let coinSound;
+
+let bgX = 0;
+let score = 0;
+let gameState = "start";
+
+let restartBtn;
+
+function preload() {
+  bg = loadImage("data/background.jpg");
+  coinImage = loadImage("data/coin.png");
+  coinSound = loadSound("data/coin.wav");
+}
+
+function setup() {
+  let canvas = createCanvas(600, 400);
+  canvas.position(50, 100);
+  frameRate(60);
+
+  player = new Player();
+  rectangle1 = new Rectangle(0, height - 60, width, 60, 9);
+  rectangle2 = new Rectangle(width, height - 60, width, 60, 9);
+  obs1 = new Obstacle(width, height - 60 - random(30, 250), 40, 50, 9);
+  obs2 = new Obstacle(width + 400, height - 60 - random(0, 250), 40, 50, 9);
+  coin = new Coin(width + 200, height - 60 - random(50, 200), 20, 8, coinImage);
+
+  //restart buttom
+  restartBtn = createButton('restart');
+  restartBtn.position(width/2 - 40, height/2 + 80);
+  restartBtn.size(80, 30);
+  restartBtn.mousePressed(restartGame);
+  restartBtn.hide();
+}
+
+function draw() {
+  //background scroll
+  image(bg, bgX, 0, width, height);
+  image(bg, bgX + width, 0, width, height);
+  bgX -= 6;
+  if (bgX <= -width) bgX = 0;
+
+  fill(0,0,0);          
+  textSize(24);        
+  textAlign(LEFT, TOP);
+  text("Coin Adventure", 20, 20); 
+
+  if (gameState === "start") {
+    fill("#FF6A61");
+    textSize(40);
+    textAlign(CENTER, CENTER);
+    text("Press SPACE to start", width/2, height/2);
+    textSize(15);
+    text("Collect coins and avoid the obstacles!", width/2, height/2 + 40);
+    text("Use SPACE to jump", width/2, height/2 + 70);
+    restartBtn.hide();
+  } else if (gameState === "play") {
+
+    player.update();
+    player.display();
+
+    rectangle1.move(rectangle2);
+    rectangle1.display();
+    rectangle2.move(rectangle1);
+    rectangle2.display();
+
+    obs1.move();
+    obs1.show();
+    obs2.move();
+    obs2.show();
+
+    coin.move();
+    coin.show();
+
+    //collisions
+    if (isColliding(player, obs1) || isColliding(player, obs2)) {
+      gameState = "gameOver";
+    }
+
+    if (!coin.collected && player.x < coin.x + coin.size &&
+        player.x + player.w > coin.x &&
+        player.y < coin.y + coin.size &&
+        player.y + player.h > coin.y) {
+      coin.collected = true;
+      score++;
+      coinSound.play();
+    }
+
+    //score display
+    fill(0);
+    textSize(20);
+    textAlign(RIGHT, TOP);
+    text("Coins: " + score, width - 20, 20);
+    restartBtn.hide();
+
+  } else if (gameState === "gameOver") {
+    fill(255, 0, 0);
+    textSize(40);
+    textAlign(CENTER, CENTER);
+    text("Game Over", width/2, height/2);
+    textSize(16);
+    text("Click restart to play again", width/2, height/2 + 50);
+    restartBtn.show();
+  }
+}
+
+//jump
+function keyPressed() {
+  if (gameState === "start" && key === ' ') {
+    gameState = "play";
+  } else if (gameState === "play" && key === ' ') {
+    player.jump();
+  }
+}
+
+//restart game
+function restartGame() {
+  score = 0;
+  player = new Player();
+  rectangle1 = new Rectangle(0, height - 60, width, 60, 9);
+  rectangle2 = new Rectangle(width, height - 60, width, 60, 9);
+  obs1 = new Obstacle(width, height - 60 - random(30, 250), 40, 50, 9);
+  obs2 = new Obstacle(width + 400, height - 60 - random(0, 250), 40, 50, 9);
+  coin = new Coin(width + 200, height - 60 - random(50, 200), 20, 8, coinImage);
+  gameState = "play";
+  restartBtn.hide();
+}
+
+//classes
+
+class Player {
+  constructor() {
+    this.w = 50;
+    this.h = 50;
+    this.x = 105;
+    this.y = height - this.h - 60;
+    this.yVelocity = 0;
+    this.gravity = 3.0;
+    this.jumpForce = -35;
+    this.onGround = true;
+  }
+
+  display() {
+    fill("#8C3F5B");
+    rect(this.x, this.y, this.w, this.h);
+  }
+
+  update() {
+    this.y += this.yVelocity;
+    this.yVelocity += this.gravity;
+
+    if (this.y >= height - this.h - 60) {
+      this.y = height - this.h - 60;
+      this.yVelocity = 0;
+      this.onGround = true;
+    }
+  }
+
+  jump() {
+    if (this.onGround) {
+      this.yVelocity = this.jumpForce;
+      this.onGround = false;
+    }
+  }
+}
+
+class Coin {
+  constructor(x, y, size, speed, img) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.speed = speed;
+    this.img = img;
+    this.collected = false;
+  }
+
+  move() {
+    this.x -= this.speed;
+    if (this.x + this.size < 0) {
+      this.x = width + random(100, 500);
+      this.y = height - 60 - random(50, 200);
+      this.collected = false;
+    }
+  }
+
+  show() {
+    if (!this.collected) {
+      image(this.img, this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+    }
+  }
+}
+
+class Obstacle {
+  constructor(x, y, w, h, speed) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.speed = speed;
+    this.col = color(random(255), random(255), random(255));
+  }
+
+  move() {
+    this.x -= this.speed;
+    if (this.x + this.w < 0) {
+      this.x = width;
+      this.y = height - 60 - random(0, 250);
+      this.col = color(random(255), random(255), random(255));
+    }
+  }
+
+  show() {
+    fill(this.col);
+    rect(this.x, this.y, this.w, this.h);
+  }
+}
+
+class Rectangle {
+  constructor(x, y, w, h, speed) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.speed = speed;
+  }
+
+  move(other) {
+    this.x -= this.speed;
+    if (this.x + this.w < 0) this.x = other.x + other.w - this.speed;
+  }
+
+  display() {
+    fill("#707326");
+    rect(this.x, this.y, this.w, this.h);
+  }
+}
+
+function isColliding(p, o) {
+  return (p.x < o.x + o.w &&
+          p.x + p.w > o.x &&
+          p.y < o.y + o.h &&
+          p.y + p.h > o.y);
+}
+</script>
+</body>
+</html>
