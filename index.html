@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>2D Coin Game</title>
+  <title>Coin Adventure</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.min.js"></script>
   <style>
+    canvas {
+    margin-top: 50px; 
+    display: block;   
+  }
     body { margin: 0; padding: 0; overflow: hidden; }
     button { font-size: 16px; cursor: pointer; }
   </style>
@@ -34,8 +38,7 @@ function preload() {
 }
 
 function setup() {
-  let canvas = createCanvas(600, 400);
-  canvas.position(50, 100);
+  createCanvas(600, 400);
   frameRate(60);
 
   player = new Player();
