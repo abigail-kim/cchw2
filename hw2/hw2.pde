@@ -4,7 +4,8 @@ Obstacle obs1, obs2;
 Coin coin;
 
 import processing.sound.*;
-SoundFile file;
+SoundFile file; //coin sound
+SoundFile bgMusic; //nature background music
 
 PImage bg;
 PImage coinImage;
@@ -32,7 +33,11 @@ void setup() {
   coin = new Coin(width + 200, height - 60 - random(50, 200), 40, 8, coinImage);
   
   file = new SoundFile(this, "coin.wav");
+  bgMusic = new SoundFile(this, "nature.wav");
+  bgMusic.loop();
+  
   file.play();
+  
 }
 
 void draw() {
