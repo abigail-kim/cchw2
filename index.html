@@ -156,14 +156,14 @@ function restartGame() {
 
 class Player {
   constructor() {
-    this.w = 50;
-    this.h = 50;
-    this.x = 105;
-    this.y = height - this.h - 60;
     this.yVelocity = 0;
     this.gravity = 3.0;
     this.jumpForce = -35;
     this.onGround = true;
+    this.w = 50;
+    this.h = 50;
+    this.x = 105;
+    this.y = height - this.h - 60;
   }
 
   display() {
