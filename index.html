@@ -123,6 +123,13 @@ function draw() {
   }
 }
 
+    function isColliding(p, o) {
+    return (p.x < o.x + o.w &&
+          p.x + p.w > o.x &&
+          p.y < o.y + o.h &&
+          p.y + p.h > o.y);
+}
+
 //jump
 function keyPressed() {
   if (gameState === "start" && key === ' ') {
@@ -253,13 +260,7 @@ class Rectangle {
     rect(this.x, this.y, this.w, this.h);
   }
 }
-
-function isColliding(p, o) {
-  return (p.x < o.x + o.w &&
-          p.x + p.w > o.x &&
-          p.y < o.y + o.h &&
-          p.y + p.h > o.y);
-}
+  
 </script>
 </body>
 </html>
