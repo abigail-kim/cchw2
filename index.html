@@ -137,10 +137,12 @@ function keyPressed() {
   if (gameState === "start" && key === ' ') {
     gameState = "play";
 
-  if (!bgMusic.isPlaying()) {
-  bgMusic.loop();
-}
-    
+    // Start background music after user interaction
+    if (!bgMusic.isPlaying()) {
+      bgMusic.loop();
+      bgMusic.setVolume(0.5);
+    }
+
   } else if (gameState === "play" && key === ' ') {
     player.jump();
   }
