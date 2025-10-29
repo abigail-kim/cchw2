@@ -140,6 +140,7 @@ function keyPressed() {
     //bg music
     if (!bgMusic.isPlaying()) {
       bgMusic.loop();
+      bgMusic.setVolume(1.5);
     }
 
   } else if (gameState === "play" && key === ' ') {
