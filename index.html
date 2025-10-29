@@ -44,7 +44,7 @@ function setup() {
   rectangle2 = new Rectangle(width, height - 60, width, 60, 9);
   obs1 = new Obstacle(width, height - 60 - random(30, 250), 40, 50, 9);
   obs2 = new Obstacle(width + 400, height - 60 - random(0, 250), 40, 50, 9);
-  coin = new Coin(width + 200, height - 60 - random(50, 200), 50, 8, coinImage);
+  coin = new Coin(width + 200, height - 60 - random(50, 200), 100, 8, coinImage);
 
   //restart button
   restartBtn = createButton('restart');
@@ -156,7 +156,7 @@ function restartGame() {
   rectangle2 = new Rectangle(width, height - 60, width, 60, 9);
   obs1 = new Obstacle(width, height - 60 - random(30, 250), 40, 50, 9);
   obs2 = new Obstacle(width + 400, height - 60 - random(0, 250), 40, 50, 9);
-  coin = new Coin(width + 200, height - 60 - random(50, 200), 50, 8, coinImage);
+  coin = new Coin(width + 200, height - 60 - random(50, 200), 100, 8, coinImage);
   gameState = "play";
   restartBtn.hide();
 }
