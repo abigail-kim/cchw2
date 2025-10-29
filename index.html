@@ -34,9 +34,6 @@ function preload() {
   coinSound = loadSound("data/coin.wav");
   bgMusic = loadSound("data/nature.wav");  
 }
-  if (!bgMusic.isPlaying()) {
-  bgMusic.loop();
-}
 
 function setup() {
   createCanvas(600, 400);
@@ -139,6 +136,11 @@ function draw() {
 function keyPressed() {
   if (gameState === "start" && key === ' ') {
     gameState = "play";
+
+  if (!bgMusic.isPlaying()) {
+  bgMusic.loop();
+}
+    
   } else if (gameState === "play" && key === ' ') {
     player.jump();
   }
